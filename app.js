@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-require('dotenv').config();
+require('dotenv').config({ path: '.env.local' });  // Loads variables from .env.local
 const { Configuration, OpenAIApi } = require('openai');
 
 const app = express();
@@ -46,7 +46,7 @@ app.post('/get-meal', async (req, res) => {
     const response = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: messages,
-      max_tokens: 1000, // Increased for more detailed response
+      max_tokens: 1000,  // Increased for more detailed response
       temperature: 0.7,
     });
 
@@ -62,3 +62,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
+// node app.js
