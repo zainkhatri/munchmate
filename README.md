@@ -30,4 +30,4 @@
 
   ## Launch
 
-  - **Command to Launch**: node.js in terminal
+  - **Command to Launch**: node app.js in terminal
