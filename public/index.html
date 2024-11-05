@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MunchMate - Your Personal Chef</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -29,9 +30,9 @@
             </form>
         </div>
 
-        <div id="loading" class="loading hidden">
-            <i class="fas fa-spinner fa-spin"></i>
-            Cooking up your perfect recipe...
+        <div id="loading" class="loading">
+            <div class="loading-spinner"></div>
+            <p>Cooking up your perfect recipe...</p>
         </div>
 
         <div id="result" class="result hidden">
@@ -52,12 +53,15 @@
                     <i class="fas fa-leaf"></i>
                     <span>Reduce Waste</span>
                 </div>
-                <div class="our-name">
-                    <span>Mohsin Khawaja</span>
-                    <span>Mateen Saliminejad</span>
-                    <span>Jon Takeda</span>
-                    <span>Hooman Nowrouzi</span>
-                    <span>Zain Khatri</span>
+                <div class="contributors">
+                    <h3>Contributors</h3>
+                    <ul class="contributor-list">
+                        <li>Mohsin Khawaja</li>
+                        <li>Mateen Saliminejad</li>
+                        <li>Jon Takeda</li>
+                        <li>Hooman Nowrouzi</li>
+                        <li>Zain Khatri</li>
+                    </ul>
                 </div>
             </div>
         </footer>
@@ -78,8 +82,8 @@
 
             const loading = document.getElementById('loading');
             const result = document.getElementById('result');
-            
-            loading.classList.remove('hidden');
+
+            loading.classList.add('show');
             result.classList.add('hidden');
 
             try {
@@ -94,12 +98,9 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Parse the response and create structured HTML
                     const sections = data.mealSuggestion.split('####').map(section => section.trim());
-                    
                     let formattedHtml = '<div class="recipe-container">';
-                    
-                    // Process recipe title
+
                     const titleMatch = sections[0].match(/Recipe: (.*)/);
                     if (titleMatch) {
                         formattedHtml += `
@@ -110,7 +111,6 @@
                         `;
                     }
 
-                    // Process each section
                     sections.forEach(section => {
                         if (section.includes('Nutritional Information')) {
                             formattedHtml += `
@@ -166,19 +166,16 @@
                 result.innerHTML = '<div class="error-message">Failed to get meal suggestion. Please try again.</div>';
             }
 
-            loading.classList.add('hidden');
+            loading.classList.remove('show');
             result.classList.remove('hidden');
         });
 
         function formatList(section) {
-            // Remove section title
             const content = section.split('\n').slice(1).join('\n');
-            
-            // Convert markdown lists to HTML
             return content
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/- (.*)/g, '<li>$1</li>')
-                .replace(/\d\. (.*)/g, '<li>$1</li>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Keeps bold formatting for **text**
+                .replace(/- (.*)/g, '<li>$1</li>')                // Converts bullet points to list items
+                .replace(/\d\. (.*)/g, '<li>$1</li>')             // Converts numbered lists to list items
                 .trim();
         }
     </script>
