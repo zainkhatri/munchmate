@@ -68,116 +68,120 @@
     </div>
 
     <script>
-        document.getElementById('ingredient-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const ingredients = document.getElementById('ingredients').value
-                .split(',')
-                .map(item => item.trim())
-                .filter(item => item.length > 0);
+document.getElementById('ingredient-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const ingredients = document.getElementById('ingredients').value
+        .split(',')
+        .map(item => item.trim())
+        .filter(item => item.length > 0);
 
-            if (ingredients.length === 0) {
-                alert('Please enter at least one ingredient');
-                return;
-            }
+    if (ingredients.length === 0) {
+        alert('Please enter at least one ingredient');
+        return;
+    }
 
-            const loading = document.getElementById('loading');
-            const result = document.getElementById('result');
+    const loading = document.getElementById('loading');
+    const result = document.getElementById('result');
 
-            loading.classList.add('show');
-            result.classList.add('hidden');
+    loading.classList.add('show');
+    result.classList.add('hidden');
 
-            try {
-                const response = await fetch('/get-meal', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ ingredients }),
-                });
-
-                const data = await response.json();
-
-                if (response.ok) {
-                    const sections = data.mealSuggestion.split('####').map(section => section.trim());
-                    let formattedHtml = '<div class="recipe-container">';
-
-                    const titleMatch = sections[0].match(/Recipe: (.*)/);
-                    if (titleMatch) {
-                        formattedHtml += `
-                            <div class="recipe-header">
-                                <i class="fas fa-utensils"></i>
-                                <h2>${titleMatch[1]}</h2>
-                            </div>
-                        `;
-                    }
-
-                    sections.forEach(section => {
-                        if (section.includes('Nutritional Information')) {
-                            formattedHtml += `
-                                <div class="recipe-section nutrition">
-                                    <h3><i class="fas fa-chart-pie"></i> Nutritional Information</h3>
-                                    ${formatList(section)}
-                                </div>
-                            `;
-                        } else if (section.includes('Health Benefits')) {
-                            formattedHtml += `
-                                <div class="recipe-section benefits">
-                                    <h3><i class="fas fa-heart"></i> Health Benefits</h3>
-                                    ${formatList(section)}
-                                </div>
-                            `;
-                        } else if (section.includes('Instructions')) {
-                            formattedHtml += `
-                                <div class="recipe-section instructions">
-                                    <h3><i class="fas fa-list-ol"></i> Instructions</h3>
-                                    ${formatList(section)}
-                                </div>
-                            `;
-                        } else if (section.includes('Cost Comparison')) {
-                            formattedHtml += `
-                                <div class="recipe-section cost">
-                                    <h3><i class="fas fa-piggy-bank"></i> Cost Comparison</h3>
-                                    ${formatList(section)}
-                                </div>
-                            `;
-                        } else if (section.includes('Leftover Tips')) {
-                            formattedHtml += `
-                                <div class="recipe-section tips">
-                                    <h3><i class="fas fa-lightbulb"></i> Leftover Tips</h3>
-                                    ${formatList(section)}
-                                </div>
-                            `;
-                        } else if (section.includes('Variations')) {
-                            formattedHtml += `
-                                <div class="recipe-section variations">
-                                    <h3><i class="fas fa-random"></i> Variations</h3>
-                                    ${formatList(section)}
-                                </div>
-                            `;
-                        }
-                    });
-
-                    formattedHtml += '</div>';
-                    result.innerHTML = formattedHtml;
-                } else {
-                    result.innerHTML = `<div class="error-message">${data.error}</div>`;
-                }
-            } catch (error) {
-                result.innerHTML = '<div class="error-message">Failed to get meal suggestion. Please try again.</div>';
-            }
-
-            loading.classList.remove('show');
-            result.classList.remove('hidden');
+    try {
+        const response = await fetch('/get-meal', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ ingredients }),
         });
 
-        function formatList(section) {
-            const content = section.split('\n').slice(1).join('\n');
-            return content
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')  // Keeps bold formatting for **text**
-                .replace(/- (.*)/g, '<li>$1</li>')                // Converts bullet points to list items
-                .replace(/\d\. (.*)/g, '<li>$1</li>')             // Converts numbered lists to list items
-                .trim();
+        const data = await response.json();
+
+        if (response.ok) {
+            const sections = data.mealSuggestion.split('####').map(section => section.trim());
+            let formattedHtml = '<div class="recipe-container">';
+
+            // Extract title
+            const titleMatch = sections[0].match(/Recipe: (.*)/);
+            if (titleMatch) {
+                const formattedTitle = titleMatch[1].replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');  // Properly format title with <b> tags
+                formattedHtml += `
+                    <div class="recipe-header">
+                        <i class="fas fa-utensils"></i>
+                        <h2>${formattedTitle}</h2>
+                    </div>
+                `;
+            }
+
+            // Process other sections
+            sections.forEach(section => {
+                if (section.includes('Nutritional Information')) {
+                    formattedHtml += `
+                        <div class="recipe-section nutrition">
+                            <h3><i class="fas fa-chart-pie"></i> Nutritional Information</h3>
+                            ${formatList(section)}
+                        </div>
+                    `;
+                } else if (section.includes('Health Benefits')) {
+                    formattedHtml += `
+                        <div class="recipe-section benefits">
+                            <h3><i class="fas fa-heart"></i> Health Benefits</h3>
+                            ${formatList(section)}
+                        </div>
+                    `;
+                } else if (section.includes('Instructions')) {
+                    formattedHtml += `
+                        <div class="recipe-section instructions">
+                            <h3><i class="fas fa-list-ol"></i> Instructions</h3>
+                            ${formatList(section)}
+                        </div>
+                    `;
+                } else if (section.includes('Cost Comparison')) {
+                    formattedHtml += `
+                        <div class="recipe-section cost">
+                            <h3><i class="fas fa-piggy-bank"></i> Cost Comparison</h3>
+                            ${formatList(section)}
+                        </div>
+                    `;
+                } else if (section.includes('Leftover Tips')) {
+                    formattedHtml += `
+                        <div class="recipe-section tips">
+                            <h3><i class="fas fa-lightbulb"></i> Leftover Tips</h3>
+                            ${formatList(section)}
+                        </div>
+                    `;
+                } else if (section.includes('Variations')) {
+                    formattedHtml += `
+                        <div class="recipe-section variations">
+                            <h3><i class="fas fa-random"></i> Variations</h3>
+                            ${formatList(section)}
+                        </div>
+                    `;
+                }
+            });
+
+            formattedHtml += '</div>';
+            result.innerHTML = formattedHtml;
+        } else {
+            result.innerHTML = `<div class="error-message">${data.error}</div>`;
         }
-    </script>
+    } catch (error) {
+        result.innerHTML = '<div class="error-message">Failed to get meal suggestion. Please try again.</div>';
+    }
+
+    loading.classList.remove('show');
+    result.classList.remove('hidden');
+});
+
+function formatList(section) {
+    const content = section.split('\n').slice(1).join('\n');
+    return content
+        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')  // Properly bold text using <b> tags
+        .replace(/- (.*)/g, '<li>$1</li>')       // Converts bullet points to list items
+        .replace(/\d\. (.*)/g, '<li>$1</li>')    // Converts numbered lists to list items
+        .trim();
+}
+
+    </script>    
 </body>
 </html>
