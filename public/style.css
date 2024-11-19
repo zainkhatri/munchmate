@@ -196,6 +196,7 @@ footer {
   justify-content: center;
   flex-wrap: wrap;
   gap: 2rem;
+  margin-top: 2rem;
 }
 
 .benefit-item {
@@ -257,5 +258,183 @@ footer {
 
   .benefit-item {
       width: 140px;
+  }
+}
+
+/* Keep your existing root variables and base styles up to .result {...} */
+
+.recipe-container {
+  background-color: var(--card-background);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px var(--shadow-color);
+}
+
+.recipe-section {
+  padding: 1.8rem;
+  border-bottom: 1px solid #eee;
+}
+
+.recipe-section:first-child {
+  /* Dish name section */
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: white;
+  text-align: center;
+  padding: 2rem;
+}
+
+.recipe-section:first-child h3 {
+  color: white;
+  font-size: 1.8rem;
+  margin: 0;
+  justify-content: center;
+}
+
+.recipe-section h3 {
+  color: var(--primary-color);
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-content {
+  margin-left: 0.3rem;
+}
+
+/* List Styling */
+.recipe-section ul,
+.recipe-section ol {
+  margin: 0;
+  padding: 0;
+}
+
+.recipe-section li {
+  list-style: none;
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.recipe-section li:last-child {
+  margin-bottom: 0;
+}
+
+.recipe-section ul li:before {
+  content: "•";
+  color: var(--primary-color);
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+/* Nutritional Info Grid */
+.recipe-section:nth-child(2) .section-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.8rem;
+}
+
+.recipe-section:nth-child(2) li {
+  padding: 0.6rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  text-align: center;
+  margin: 0;
+}
+
+.recipe-section:nth-child(2) li:before {
+  content: none;
+}
+
+/* Instructions Section */
+.recipe-section ol {
+  counter-reset: recipe-steps;
+}
+
+.recipe-section ol li {
+  counter-increment: recipe-steps;
+}
+
+.recipe-section ol li:before {
+  content: counter(recipe-steps) ".";
+  color: var(--primary-color);
+  font-weight: 600;
+  position: absolute;
+  left: 0;
+}
+
+/* Cost Comparison */
+.recipe-section:nth-child(5) .section-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.8rem;
+}
+
+.recipe-section:nth-child(5) li {
+  padding: 0.6rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  text-align: center;
+  margin: 0;
+}
+
+.recipe-section:nth-child(5) li:before {
+  content: none;
+}
+
+/* Timing Section */
+.recipe-section:last-child .section-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.8rem;
+}
+
+.recipe-section:last-child li {
+  padding: 0.6rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  text-align: center;
+  margin: 0;
+}
+
+.recipe-section:last-child li:before {
+  content: none;
+}
+
+/* Keep your existing media queries at the bottom */
+@media (max-width: 768px) {
+  .recipe-section {
+    padding: 1.5rem;
+  }
+
+  .recipe-section:first-child {
+    padding: 1.5rem;
+  }
+
+  .recipe-section:first-child h3 {
+    font-size: 1.5rem;
+  }
+
+  .recipe-section:nth-child(2) .section-content,
+  .recipe-section:nth-child(5) .section-content,
+  .recipe-section:last-child .section-content {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    width: 95%;
+    margin: 1.5rem auto;
+    padding: 1.5rem;
+  }
+
+  .recipe-section:nth-child(2) .section-content,
+  .recipe-section:nth-child(5) .section-content,
+  .recipe-section:last-child .section-content {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

@@ -3,185 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MunchMate - Your Personal Chef</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <title>MunchMate - Transform Ingredients into Delicious Meals</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script src="js/main.js" defer></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1><i class="fas fa-utensils"></i> MunchMate</h1>
+            <h1>MunchMate</h1>
             <p class="tagline">Transform your ingredients into healthy, delicious meals!</p>
         </header>
 
-        <div class="input-section">
-            <form id="ingredient-form">
-                <div class="input-group">
-                    <label for="ingredients">What ingredients do you have?</label>
-                    <div class="input-wrapper">
-                        <i class="fas fa-carrot input-icon"></i>
-                        <input type="text" id="ingredients" placeholder="e.g., chicken, rice, tomatoes, onions" required>
-                    </div>
+        <section class="input-section">
+            <div class="input-group">
+                <label for="ingredients">What ingredients do you have?</label>
+                <div class="input-wrapper">
+                    <i class="input-icon fas fa-carrot"></i>
+                    <input type="text" id="ingredients" placeholder="Enter ingredients (comma-separated)">
                 </div>
-                <button type="submit">
-                    <i class="fas fa-magic"></i> Create Magic Meal
-                </button>
-            </form>
-        </div>
+            </div>
+            <button id="generate-recipe">
+                <i class="fas fa-wand-magic-sparkles"></i>
+                Create Magic Meal
+            </button>
+        </section>
 
         <div id="loading" class="loading">
             <div class="loading-spinner"></div>
             <p>Cooking up your perfect recipe...</p>
         </div>
 
-        <div id="result" class="result hidden">
-            <!-- Recipe will be displayed here -->
-        </div>
+        <div id="result" class="result"></div>
 
-        <footer>
-            <div class="benefits">
-                <div class="benefit-item">
-                    <i class="fas fa-heart"></i>
-                    <span>Healthier Choices</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-piggy-bank"></i>
-                    <span>Save Money</span>
-                </div>
-                <div class="benefit-item">
-                    <i class="fas fa-leaf"></i>
-                    <span>Reduce Waste</span>
-                </div>
-                <div class="contributors">
-                    <h3>Contributors</h3>
-                    <ul class="contributor-list">
-                        <li>Mohsin Khawaja</li>
-                        <li>Mateen Saliminejad</li>
-                        <li>Jon Takeda</li>
-                        <li>Hooman Nowrouzi</li>
-                        <li>Zain Khatri</li>
-                    </ul>
-                </div>
+        <section class="benefits">
+            <div class="benefit-item">
+                <i class="fas fa-heart"></i>
+                <h3>Healthier Choices</h3>
+                <p>Nutritionist-approved recipes for better living</p>
             </div>
-        </footer>
+            <div class="benefit-item">
+                <i class="fas fa-wallet"></i>
+                <h3>Save Money</h3>
+                <p>Cook restaurant-quality meals at home</p>
+            </div>
+            <div class="benefit-item">
+                <i class="fas fa-leaf"></i>
+                <h3>Reduce Waste</h3>
+                <p>Use what you have, waste nothing</p>
+            </div>
+        </section>
     </div>
-
-    <script>
-document.getElementById('ingredient-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const ingredients = document.getElementById('ingredients').value
-        .split(',')
-        .map(item => item.trim())
-        .filter(item => item.length > 0);
-
-    if (ingredients.length === 0) {
-        alert('Please enter at least one ingredient');
-        return;
-    }
-
-    const loading = document.getElementById('loading');
-    const result = document.getElementById('result');
-
-    loading.classList.add('show');
-    result.classList.add('hidden');
-
-    try {
-        const response = await fetch('/get-meal', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ ingredients }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            const sections = data.mealSuggestion.split('####').map(section => section.trim());
-            let formattedHtml = '<div class="recipe-container">';
-
-            // Extract title
-            const titleMatch = sections[0].match(/Recipe: (.*)/);
-            if (titleMatch) {
-                const formattedTitle = titleMatch[1].replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');  // Properly format title with <b> tags
-                formattedHtml += `
-                    <div class="recipe-header">
-                        <i class="fas fa-utensils"></i>
-                        <h2>${formattedTitle}</h2>
-                    </div>
-                `;
-            }
-
-            // Process other sections
-            sections.forEach(section => {
-                if (section.includes('Nutritional Information')) {
-                    formattedHtml += `
-                        <div class="recipe-section nutrition">
-                            <h3><i class="fas fa-chart-pie"></i> Nutritional Information</h3>
-                            ${formatList(section)}
-                        </div>
-                    `;
-                } else if (section.includes('Health Benefits')) {
-                    formattedHtml += `
-                        <div class="recipe-section benefits">
-                            <h3><i class="fas fa-heart"></i> Health Benefits</h3>
-                            ${formatList(section)}
-                        </div>
-                    `;
-                } else if (section.includes('Instructions')) {
-                    formattedHtml += `
-                        <div class="recipe-section instructions">
-                            <h3><i class="fas fa-list-ol"></i> Instructions</h3>
-                            ${formatList(section)}
-                        </div>
-                    `;
-                } else if (section.includes('Cost Comparison')) {
-                    formattedHtml += `
-                        <div class="recipe-section cost">
-                            <h3><i class="fas fa-piggy-bank"></i> Cost Comparison</h3>
-                            ${formatList(section)}
-                        </div>
-                    `;
-                } else if (section.includes('Leftover Tips')) {
-                    formattedHtml += `
-                        <div class="recipe-section tips">
-                            <h3><i class="fas fa-lightbulb"></i> Leftover Tips</h3>
-                            ${formatList(section)}
-                        </div>
-                    `;
-                } else if (section.includes('Variations')) {
-                    formattedHtml += `
-                        <div class="recipe-section variations">
-                            <h3><i class="fas fa-random"></i> Variations</h3>
-                            ${formatList(section)}
-                        </div>
-                    `;
-                }
-            });
-
-            formattedHtml += '</div>';
-            result.innerHTML = formattedHtml;
-        } else {
-            result.innerHTML = `<div class="error-message">${data.error}</div>`;
-        }
-    } catch (error) {
-        result.innerHTML = '<div class="error-message">Failed to get meal suggestion. Please try again.</div>';
-    }
-
-    loading.classList.remove('show');
-    result.classList.remove('hidden');
-});
-
-function formatList(section) {
-    const content = section.split('\n').slice(1).join('\n');
-    return content
-        .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')  // Properly bold text using <b> tags
-        .replace(/- (.*)/g, '<li>$1</li>')       // Converts bullet points to list items
-        .replace(/\d\. (.*)/g, '<li>$1</li>')    // Converts numbered lists to list items
-        .trim();
-}
-
-    </script>    
 </body>
 </html>

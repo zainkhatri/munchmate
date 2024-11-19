@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-require('dotenv').config({ path: '.env.local' });  // Loads variables from .env.local
+require('dotenv').config({ path: '.env.local' });
 const { Configuration, OpenAIApi } = require('openai');
 
 const app = express();
@@ -16,45 +16,105 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 app.post('/get-meal', async (req, res) => {
-  const ingredients = req.body.ingredients;
-
-  if (!ingredients || !Array.isArray(ingredients)) {
-    return res.status(400).json({ error: 'Ingredients must be an array.' });
-  }
-
   try {
-    const messages = [
-      {
-        role: "system",
-        content: `You are a professional nutritionist and chef who helps users create healthy, delicious meals from ingredients they have at home. For each recipe suggestion:
-        1. Provide a creative name for the dish
-        2. List approximate nutritional information (calories, protein, carbs, fats)
-        3. Highlight health benefits of key ingredients
-        4. Give detailed step-by-step cooking instructions
-        5. Include money-saving comparison (estimated cost at home vs. restaurant)
-        6. Provide tips for storing leftovers
-        7. Suggest variations based on common pantry items
-        
-        Format the response in clear sections with emoji indicators. Focus on encouraging healthy home cooking and preventing food waste.`
-      },
-      {
-        role: "user",
-        content: `I have the following ingredients: ${ingredients.join(', ')}. Please provide me with a detailed recipe following the format above.`
-      },
-    ];
+    const { ingredients } = req.body;
 
-    const response = await openai.createChatCompletion({
+    if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
+      return res.status(400).json({ error: 'Please provide valid ingredients.' });
+    }
+
+    console.log('Received ingredients:', ingredients);
+
+    const completion = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
-      messages: messages,
-      max_tokens: 1000,  // Increased for more detailed response
+      messages: [
+        {
+          role: "system",
+          content: `You are a professional chef. When creating a recipe, provide it as plain text without any code blocks, JSON, or XML. Do not include any additional formatting, explanations, or annotations. Just output the recipe in plain text using the exact structure provided below.
+
+🍽️ DISH NAME
+[Creative name]
+
+📊 NUTRITIONAL INFO
+• Calories: [X] kcal
+• Protein: [X]g
+• Carbs: [X]g
+• Fats: [X]g
+
+❤️ HEALTH BENEFITS
+• [Benefit 1]
+• [Benefit 2]
+• [Benefit 3]
+
+👩‍🍳 COOKING INSTRUCTIONS
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+💰 COST COMPARISON
+• Home Cost: $[X]
+• Restaurant: $[X]
+• Savings: $[X]
+
+🌟 PRO TIPS
+• [Tip 1]
+• [Tip 2]
+
+🔄 VARIATIONS
+• [Variation 1]
+• [Variation 2]
+
+🌡️ STORAGE
+• [Storage info]
+• [Duration]
+• [Reheating]
+
+⏱️ TIMING
+• Prep: [X] mins
+• Cook: [X] mins
+• Total: [X] mins
+• Servings: [X]`
+        },
+        {
+          role: "user",
+          content: `Create a recipe using these ingredients: ${ingredients.join(', ')}`
+        }
+      ],
       temperature: 0.7,
+      max_tokens: 1000,
     });
 
-    const suggestion = response.data.choices[0].message.content.trim();
-    res.json({ mealSuggestion: suggestion });
+    // Log the raw response for debugging
+    console.log('OpenAI Response:', JSON.stringify(completion.data, null, 2));
+
+    // Extract and validate the recipe text
+    let recipeText = completion.data.choices[0]?.message?.content || '';
+
+    // Remove code blocks and trim whitespace
+    recipeText = recipeText.replace(/```[\s\S]*?```/g, '').trim();
+
+    console.log('Type of recipeText:', typeof recipeText);
+    console.log('Content of recipeText:', recipeText);
+
+    if (!recipeText || typeof recipeText !== 'string') {
+      console.error('No valid recipe text received from OpenAI');
+      return res.status(500).json({ error: 'Failed to generate recipe text' });
+    }
+
+    console.log('Generated recipe:', recipeText); // Debug log
+
+    // Send the response with explicit content type
+    return res.status(200).json({
+      status: 'success',
+      mealSuggestion: recipeText
+    });
+
   } catch (error) {
-    console.error('Error fetching meal suggestion:', error.response ? error.response.data : error.message);
-    res.status(500).json({ error: 'Failed to get meal suggestion.' });
+    console.error('Server error:', error);
+    return res.status(500).json({ 
+      error: 'Failed to generate recipe',
+      details: error.message 
+    });
   }
 });
 
@@ -62,6 +122,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-
-// node app.js
