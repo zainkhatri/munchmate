@@ -404,6 +404,19 @@ footer {
   content: none;
 }
 
+.creators {
+  margin-top: 3rem;
+  padding: 1.5rem 0;
+  border-top: 1px solid #eee;
+}
+
+.credits {
+  text-align: center;
+  color: #666;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
 /* Keep your existing media queries at the bottom */
 @media (max-width: 768px) {
   .recipe-section {
