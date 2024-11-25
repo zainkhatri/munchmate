@@ -17,23 +17,23 @@ const openai = new OpenAIApi(configuration);
 
 app.post('/get-meal', async (req, res) => {
   try {
-    const { ingredients } = req.body;
+    const { ingredients, fitnessGoal } = req.body;
 
     if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
       return res.status(400).json({ error: 'Please provide valid ingredients.' });
     }
 
     console.log('Received ingredients:', ingredients);
+    console.log('Fitness goal:', fitnessGoal);
 
     const completion = await openai.createChatCompletion({
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: "system",
-          content: `You are a professional chef. When creating a recipe, provide it as plain text without any code blocks, JSON, or XML. Do not include any additional formatting, explanations, or annotations. Just output the recipe in plain text using the exact structure provided below.
+          content: `You are a professional chef and fitness expert. When creating a recipe and workout plan, provide it as plain text without any code blocks, JSON, or XML. Do not include any additional formatting, explanations, or annotations. Just output the recipe and workout in plain text using the exact structure provided below.
 
-🍽️ DISH NAME
-[Creative name]
+🍽️[Creative name]
 
 📊 NUTRITIONAL INFO
 • Calories: [X] kcal
@@ -50,6 +50,20 @@ app.post('/get-meal', async (req, res) => {
 1. [Step 1]
 2. [Step 2]
 3. [Step 3]
+4. [Step 4]
+5. [Step 5]
+6. [Step 6]
+
+💪 WORKOUT PLAN
+• Warm-up: [5-10 minute dynamic warm-up]
+• Circuit 1: [3 exercises with reps]
+• Circuit 2: [3 exercises with reps]
+• Cool-down: [5-minute stretch routine]
+
+🎯 FITNESS TIPS
+• [Tip related to meal timing and workout]
+• [Tip about nutrition and exercise synergy]
+• [Recovery advice]
 
 💰 COST COMPARISON
 • Home Cost: $[X]
@@ -77,11 +91,11 @@ app.post('/get-meal', async (req, res) => {
         },
         {
           role: "user",
-          content: `Create a recipe using these ingredients: ${ingredients.join(', ')}`
+          content: `Create a recipe using these ingredients: ${ingredients.join(', ')}' The user's fitness goal is: ${fitnessGoal || 'general fitness'}`
         }
       ],
       temperature: 0.7,
-      max_tokens: 1000,
+      max_tokens: 1500,
     });
 
     // Log the raw response for debugging
@@ -101,7 +115,7 @@ app.post('/get-meal', async (req, res) => {
       return res.status(500).json({ error: 'Failed to generate recipe text' });
     }
 
-    console.log('Generated recipe:', recipeText); // Debug log
+    console.log('Generated recipe and workout:', recipeText); // Debug log
 
     // Send the response with explicit content type
     return res.status(200).json({
