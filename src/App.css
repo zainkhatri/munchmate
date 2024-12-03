@@ -1,3 +1,4 @@
+/* Start of CSS File */
 :root {
     --primary-color: #00b894;
     --secondary-color: #00a884;
@@ -58,8 +59,8 @@
     color: #2d3436;
   }
   
-/* Input Field Styling */
-.input-wrapper {
+  /* Input Field Styling */
+  .input-wrapper {
     position: relative;
     width: 100%;
     margin-bottom: 1.5rem;
@@ -67,7 +68,7 @@
   
   .input-wrapper input[type="text"] {
     width: 100%;
-    padding: 1.2rem 1.5rem;
+    padding: 1rem 1rem 1rem 3rem; /* Adjusted padding for icon */
     font-size: 1.1rem;
     color: var(--text-color);
     background-color: #ffffff;
@@ -77,13 +78,6 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     outline: none;
     box-sizing: border-box;
-  }
-
-  .input-icon {
-    left: -1.2rem;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
   }
   
   .input-wrapper input[type="text"]::placeholder {
@@ -103,6 +97,16 @@
     transform: translateY(-1px);
   }
   
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--secondary-color);
+    font-size: 1.5rem;
+    pointer-events: none;
+  }
+  
   /* Label Styling */
   .input-group label {
     display: block;
@@ -113,27 +117,18 @@
     transition: color 0.3s ease;
   }
   
-  .input-wrapper:focus-within + label {
-    color: var(--primary-color);
-  }
-  
-  /* Input Group Container */
-  .input-group {
-    margin-bottom: 2rem;
-  }
-  
   /* Responsive Adjustments */
   @media (max-width: 768px) {
     .input-wrapper input[type="text"] {
       padding: 1rem 1.2rem;
       font-size: 1rem;
     }
-    
+  
     .input-group label {
       font-size: 1rem;
     }
   }
-
+  
   button {
     width: 100%;
     padding: 1.2rem;
@@ -177,11 +172,11 @@
   
   @keyframes spin {
     0% {
-        transform: rotate(0deg);
+      transform: rotate(0deg);
     }
   
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
   }
   
@@ -292,38 +287,7 @@
     box-shadow: 0 2px 5px var(--shadow-color);
   }
   
-  @media (max-width: 768px) {
-    .recipe-section {
-        padding: 1.5rem;
-    }
-  
-    .recipe-header {
-        padding: 1.5rem;
-    }
-  
-    .recipe-header h2 {
-        font-size: 1.6rem;
-    }
-  
-    .benefit-item {
-        width: 140px;
-    }
-  }
-  
-  /* Keep your existing root variables and base styles up to .result {...} */
-  
-  .recipe-container {
-    background-color: var(--card-background);
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px var(--shadow-color);
-  }
-  
-  .recipe-section {
-    padding: 1.8rem;
-    border-bottom: 1px solid #eee;
-  }
-  
+  /* Recipe Sections Styling */
   .recipe-section:first-child {
     /* Dish name section */
     background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -466,7 +430,7 @@
     letter-spacing: 0.5px;
   }
   
-  /* Keep your existing media queries at the bottom */
+  /* Media Queries */
   @media (max-width: 768px) {
     .recipe-section {
       padding: 1.5rem;
@@ -485,6 +449,10 @@
     .recipe-section:last-child .section-content {
       grid-template-columns: repeat(2, 1fr);
     }
+  
+    .benefit-item {
+      width: 140px;
+    }
   }
   
   @media (max-width: 480px) {
@@ -500,3 +468,5 @@
       grid-template-columns: repeat(2, 1fr);
     }
   }
+  /* End of CSS File */
+  
