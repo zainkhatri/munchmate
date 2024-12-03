@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import './App.css';
 
-function App() {
+const App = () => {
   const [ingredients, setIngredients] = useState('');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState('');
@@ -108,15 +107,14 @@ function App() {
         <form onSubmit={handleSubmit}>
           <div className="input-group">
             <label htmlFor="ingredients">Enter your ingredients (separated by commas)</label>
-            <div className="input-wrapper">
-              <input
-                type="text"
-                id="ingredients"
-                value={ingredients}
-                onChange={(e) => setIngredients(e.target.value)}
-                placeholder="e.g., chicken, rice, broccoli"
-              />
-            </div>
+            <input
+              type="text"
+              id="ingredients"
+              value={ingredients}
+              onChange={(e) => setIngredients(e.target.value)}
+              placeholder="Enter ingredients (comma-separated)"
+              className="text-input"
+            />
           </div>
           <button type="submit" disabled={loading}>
             {loading ? 'Generating...' : 'Generate Recipe'}
@@ -142,6 +140,6 @@ function App() {
       </footer>
     </div>
   );
-}
+};
 
 export default App;
