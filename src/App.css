@@ -55,36 +55,85 @@
     display: block;
     margin-bottom: 0.8rem;
     font-weight: 600;
-    color: var(--text-color);
+    color: #2d3436;
   }
   
-  .input-wrapper {
+/* Input Field Styling */
+.input-wrapper {
     position: relative;
-  }
-  
-  .input-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #666;
-  }
-  
-  input[type="text"] {
     width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .input-wrapper input[type="text"] {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    font-size: 1.1rem;
+    color: var(--text-color);
+    background-color: #ffffff;
     border: 2px solid #e0e0e0;
     border-radius: 12px;
-    font-size: 1.1rem;
-    transition: border-color 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    outline: none;
     box-sizing: border-box;
   }
-  
-  input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
+
+  .input-icon {
+    left: -1.2rem;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
   
+  .input-wrapper input[type="text"]::placeholder {
+    color: #999;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  
+  .input-wrapper input[type="text"]:hover {
+    border-color: var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .input-wrapper input[type="text"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 184, 148, 0.15);
+    transform: translateY(-1px);
+  }
+  
+  /* Label Styling */
+  .input-group label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1.05rem;
+    transition: color 0.3s ease;
+  }
+  
+  .input-wrapper:focus-within + label {
+    color: var(--primary-color);
+  }
+  
+  /* Input Group Container */
+  .input-group {
+    margin-bottom: 2rem;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .input-wrapper input[type="text"] {
+      padding: 1rem 1.2rem;
+      font-size: 1rem;
+    }
+    
+    .input-group label {
+      font-size: 1rem;
+    }
+  }
+
   button {
     width: 100%;
     padding: 1.2rem;
