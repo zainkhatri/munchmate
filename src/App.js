@@ -2,39 +2,57 @@ import React, { useState } from 'react';
 
 const App = () => {
   const [ingredients, setIngredients] = useState('');
+  const [fitnessGoals, setFitnessGoals] = useState({
+    weightLoss: false,
+    muscleGain: false,
+    generalFitness: false,
+  });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState('');
 
+  const handleCheckboxChange = (e) => {
+    const { name, checked } = e.target;
+    setFitnessGoals((prevGoals) => ({
+      ...prevGoals,
+      [name]: checked,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const ingredientList = ingredients
       .split(',')
-      .map(item => item.trim())
-      .filter(item => item.length > 0);
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
 
     if (ingredientList.length === 0) {
       alert('Please enter at least one ingredient');
       return;
     }
 
+    const selectedGoals = Object.entries(fitnessGoals)
+      .filter(([key, value]) => value)
+      .map(([key]) => key.replace(/([A-Z])/g, ' $1').trim());
+
     setLoading(true);
     setResult('');
 
     try {
       console.log('Sending ingredients:', ingredientList);
+      console.log('Selected fitness goals:', selectedGoals);
 
       const response = await fetch('/get-meal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          Accept: 'application/json',
         },
-        body: JSON.stringify({ ingredients: ingredientList }),
+        body: JSON.stringify({ ingredients: ingredientList, fitnessGoal: selectedGoals }),
       });
 
       const data = await response.json();
-      
+
       if (!response.ok) {
         throw new Error(data.error || 'Failed to generate recipe');
       }
@@ -56,7 +74,7 @@ const App = () => {
     if (!recipe) return null;
 
     const sections = recipe.split('\n\n');
-    
+
     return (
       <div className="recipe-container">
         {sections.map((section, index) => {
@@ -64,7 +82,7 @@ const App = () => {
 
           const lines = section
             .split('\n')
-            .map(line => line.trim())
+            .map((line) => line.trim())
             .filter(Boolean);
 
           if (!lines.length) return null;
@@ -116,6 +134,41 @@ const App = () => {
               className="text-input"
             />
           </div>
+
+          <div className="checkbox-group">
+            <label>Select your fitness goals:</label>
+            <div>
+              <input
+                type="checkbox"
+                id="weight-loss"
+                name="weightLoss"
+                checked={fitnessGoals.weightLoss}
+                onChange={handleCheckboxChange}
+              />
+              <label htmlFor="weight-loss">Weight Loss</label>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                id="muscle-gain"
+                name="muscleGain"
+                checked={fitnessGoals.muscleGain}
+                onChange={handleCheckboxChange}
+              />
+              <label htmlFor="muscle-gain">Muscle Gain</label>
+            </div>
+            <div>
+              <input
+                type="checkbox"
+                id="general-fitness"
+                name="generalFitness"
+                checked={fitnessGoals.generalFitness}
+                onChange={handleCheckboxChange}
+              />
+              <label htmlFor="general-fitness">General Fitness</label>
+            </div>
+          </div>
+
           <button type="submit" disabled={loading}>
             {loading ? 'Generating...' : 'Generate Recipe'}
           </button>
@@ -129,9 +182,7 @@ const App = () => {
         </div>
       )}
 
-      <div className="result">
-        {result && renderRecipe(result)}
-      </div>
+      <div className="result">{result && renderRecipe(result)}</div>
 
       <footer>
         <div className="creators">

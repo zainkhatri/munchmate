@@ -23,6 +23,8 @@ app.post('/get-meal', async (req, res) => {
   try {
     const { ingredients, fitnessGoal } = req.body;
 
+    // console.log('Received request:', req.body);
+
     if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
       return res.status(400).json({ error: 'Please provide valid ingredients.' });
     }
@@ -103,7 +105,7 @@ app.post('/get-meal', async (req, res) => {
     });
 
     // Log the raw response for debugging
-    console.log('OpenAI Response:', JSON.stringify(completion.data, null, 2));
+    // console.log('OpenAI Response:', JSON.stringify(completion.data, null, 2));
 
     // Extract and validate the recipe text
     let recipeText = completion.data.choices[0]?.message?.content || '';
@@ -111,15 +113,15 @@ app.post('/get-meal', async (req, res) => {
     // Remove code blocks and trim whitespace
     recipeText = recipeText.replace(/```[\s\S]*?```/g, '').trim();
 
-    console.log('Type of recipeText:', typeof recipeText);
-    console.log('Content of recipeText:', recipeText);
+    // console.log('Type of recipeText:', typeof recipeText);
+    // console.log('Content of recipeText:', recipeText);
 
     if (!recipeText || typeof recipeText !== 'string') {
       console.error('No valid recipe text received from OpenAI');
       return res.status(500).json({ error: 'Failed to generate recipe text' });
     }
 
-    console.log('Generated recipe and workout:', recipeText); // Debug log
+    // console.log('Generated recipe and workout:', recipeText); // Debug log
 
     // Send the response with explicit content type
     return res.status(200).json({
@@ -128,10 +130,10 @@ app.post('/get-meal', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Server error:', error);
-    return res.status(500).json({ 
+    // console.error('Server error:', error);
+    return res.status(500).json({
       error: 'Failed to generate recipe',
-      details: error.message 
+      details: error.message
     });
   }
 });
