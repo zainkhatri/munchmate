@@ -26,8 +26,18 @@
 - **Frontend**: HTML, CSS, JavaScript, Font Awesome for icons
 - **Backend**: Node.js, Express.js
 - **AI API**: OpenAI (GPT-3.5 Turbo)
-- **Environment Management**: `.env.local` for API key storage
+- **Environment Management**: `.env.local` for API key storage.  See `.env.default` for instructions.
 
-  ## Launch
+## Launch
+- `npm install`
 
-  - **Command to Launch**: node app.js in terminal
+- Debug the frontend
+  - `npm run dev`
+- Debug the backend
+  - `npm run build`
+  - `node app.js`
+- Setup nodemon for backend debugging
+  - `npm install -g nodemon`
+  - `nodemon --inspect app.js`
+  - Open up Chrome and go to `chrome://inspect` to debug
+  - Open the `app.js` file in Chrome DevTools to set breakpoints
