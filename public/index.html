@@ -1,67 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MunchMate - Transform Ingredients into Delicious Meals</title>
-    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
-    <script src="js/main.js" defer></script>
 </head>
-
 <body>
-    <div class="container" id="root">
-        <header>
-            <h1>MunchMate</h1>
-            <p class="tagline">Transform your ingredients into healthy, delicious meals!</p>
-        </header>
-
-        <section class="input-section">
-            <div class="input-group">
-                <label for="ingredients">What ingredients do you have?</label>
-                <div class="input-wrapper">
-                    <i class="input-icon fas fa-carrot"></i>
-                    <input type="text" id="ingredients" placeholder="Enter ingredients (comma-separated)">
-                </div>
-            </div>
-            <button id="generate-recipe">
-                <i class="fas fa-wand-magic-sparkles"></i>
-                Create Magic Meal
-            </button>
-        </section>
-
-        <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            <p>Cooking up your perfect recipe...</p>
-        </div>
-
-        <div id="result" class="result"></div>
-
-        <section class="benefits">
-            <div class="benefit-item">
-                <i class="fas fa-heart"></i>
-                <h3>Healthier Choices</h3>
-                <p>Nutritionist-approved recipes for better living</p>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-wallet"></i>
-                <h3>Save Money</h3>
-                <p>Cook restaurant-quality meals at home</p>
-            </div>
-            <div class="benefit-item">
-                <i class="fas fa-leaf"></i>
-                <h3>Reduce Waste</h3>
-                <p>Use what you have, waste nothing</p>
-            </div>
-        </section>
-        <footer class="creators">
-            <p class="credits">
-                Zain Khatri · Mohsin Khawaja · Jon Takeda · Mateen Saliminejad · Hooman Nowrouzi
-            </p>
-        </footer>
-    </div>
+    <div id="root"></div>
 </body>
-
 </html>

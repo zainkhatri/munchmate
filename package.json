@@ -2,25 +2,32 @@
   "name": "munchmate",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:3000",
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.1",
+    "concurrently": "^9.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.4.1",
+    "framer-motion": "^11.13.1",
     "nodemon": "^3.1.7",
     "openai": "^3.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-intersection-observer": "^9.13.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "node app.js",
+    "start-server": "node app.js",
+    "start": "react-scripts start",
     "build": "react-scripts build",
-    "dev": "react-scripts start",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "dev": "concurrently \"npm run start-server\" \"npm run start\""
   },
   "engines": {
     "node": "18.x"

@@ -1,194 +1,175 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const App = () => {
   const [ingredients, setIngredients] = useState('');
   const [fitnessGoals, setFitnessGoals] = useState({
     weightLoss: false,
     muscleGain: false,
-    generalFitness: false,
+    generalFitness: false
   });
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState('');
 
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFitnessGoals((prevGoals) => ({
-      ...prevGoals,
-      [name]: checked,
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!ingredients.trim()) return;
+    
+    setLoading(true);
     const ingredientList = ingredients
       .split(',')
-      .map((item) => item.trim())
-      .filter((item) => item.length > 0);
-
-    if (ingredientList.length === 0) {
-      alert('Please enter at least one ingredient');
-      return;
-    }
+      .map(item => item.trim())
+      .filter(item => item.length > 0);
 
     const selectedGoals = Object.entries(fitnessGoals)
-      .filter(([key, value]) => value)
-      .map(([key]) => key.replace(/([A-Z])/g, ' $1').trim());
-
-    setLoading(true);
-    setResult('');
+      .filter(([_, checked]) => checked)
+      .map(([goal]) => goal);
 
     try {
-      console.log('Sending ingredients:', ingredientList);
-      console.log('Selected fitness goals:', selectedGoals);
-
       const response = await fetch('/get-meal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Accept: 'application/json',
         },
-        body: JSON.stringify({ ingredients: ingredientList, fitnessGoal: selectedGoals }),
+        body: JSON.stringify({
+          ingredients: ingredientList,
+          fitnessGoal: selectedGoals
+        }),
       });
 
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate recipe');
-      }
-
-      if (!data.mealSuggestion) {
-        throw new Error('Recipe data is missing from server response');
-      }
-
       setResult(data.mealSuggestion);
     } catch (error) {
-      console.error('Error details:', error);
-      setResult(`Error: ${error.message}\nPlease try again.`);
+      console.error('Error:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const renderRecipe = (recipe) => {
-    if (!recipe) return null;
-
-    const sections = recipe.split('\n\n');
-
-    return (
-      <div className="recipe-container">
-        {sections.map((section, index) => {
-          if (!section.trim()) return null;
-
-          const lines = section
-            .split('\n')
-            .map((line) => line.trim())
-            .filter(Boolean);
-
-          if (!lines.length) return null;
-
-          return (
-            <div key={index} className="recipe-section">
-              <h3>{lines[0]}</h3>
-              {lines.length > 1 && (
-                <div className="section-content">
-                  {lines[0].includes('👩‍🍳') ? (
-                    <ol>
-                      {lines.slice(1).map((line, i) => (
-                        <li key={i}>{line.replace(/^\d+\.\s*/, '')}</li>
-                      ))}
-                    </ol>
-                  ) : (
-                    <ul>
-                      {lines.slice(1).map((line, i) => (
-                        <li key={i}>{line.replace(/^•\s*/, '')}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
-
   return (
-    <div className="container">
-      <header>
-        <h1>MunchMate</h1>
-        <p className="tagline">Turn your ingredients into delicious, healthy meals!</p>
-      </header>
+    <div className="app-wrapper">
+      <div className="container">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1>MunchMate</h1>
+          <p className="tagline">
+            Transform your ingredients into healthy, delicious meals!
+          </p>
+        </motion.header>
 
-      <div className="input-section">
-        <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label htmlFor="ingredients">Enter your ingredients (separated by commas)</label>
-            <input
-              type="text"
-              id="ingredients"
-              value={ingredients}
-              onChange={(e) => setIngredients(e.target.value)}
-              placeholder="Enter ingredients (comma-separated)"
-              className="text-input"
-            />
-          </div>
-
-          <div className="checkbox-group">
-            <label>Select your fitness goals:</label>
-            <div>
-              <input
-                type="checkbox"
-                id="weight-loss"
-                name="weightLoss"
-                checked={fitnessGoals.weightLoss}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor="weight-loss">Weight Loss</label>
+        <motion.section 
+          className="input-section"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <form onSubmit={handleSubmit}>
+            <div className="input-group">
+              <label htmlFor="ingredients">
+                What ingredients do you have?
+              </label>
+              <div className="input-wrapper">
+                <input
+                  type="text"
+                  id="ingredients"
+                  value={ingredients}
+                  onChange={(e) => setIngredients(e.target.value)}
+                  placeholder="Enter ingredients (comma-separated)"
+                />
+              </div>
             </div>
-            <div>
-              <input
-                type="checkbox"
-                id="muscle-gain"
-                name="muscleGain"
-                checked={fitnessGoals.muscleGain}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor="muscle-gain">Muscle Gain</label>
+
+            <div className="fitness-goals">
+              <label>Select your fitness goals:</label>
+              <div className="goal-options">
+                {Object.entries({
+                  weightLoss: 'Weight Loss',
+                  muscleGain: 'Muscle Gain',
+                  generalFitness: 'General Fitness'
+                }).map(([key, label]) => (
+                  <motion.div
+                    key={key}
+                    className="goal-option"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <input
+                      type="checkbox"
+                      id={key}
+                      checked={fitnessGoals[key]}
+                      onChange={(e) => setFitnessGoals(prev => ({
+                        ...prev,
+                        [key]: e.target.checked
+                      }))}
+                    />
+                    <label htmlFor={key}>{label}</label>
+                  </motion.div>
+                ))}
+              </div>
             </div>
-            <div>
-              <input
-                type="checkbox"
-                id="general-fitness"
-                name="generalFitness"
-                checked={fitnessGoals.generalFitness}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor="general-fitness">General Fitness</label>
-            </div>
-          </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Generating...' : 'Generate Recipe'}
-          </button>
-        </form>
-      </div>
+            <motion.button
+              type="submit"
+              disabled={loading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {loading ? 'Generating...' : 'Generate Recipe'}
+            </motion.button>
+          </form>
+        </motion.section>
 
-      {loading && (
-        <div className="loading show">
-          <div className="loading-spinner"></div>
-          <p>Creating your personalized recipe...</p>
-        </div>
-      )}
+        <AnimatePresence mode="wait">
+          {loading && (
+            <motion.div
+              key="loading"
+              className="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="loading-spinner" />
+              <p>Creating your personalized recipe...</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <div className="result">{result && renderRecipe(result)}</div>
+        <AnimatePresence mode="wait">
+          {result && (
+            <motion.div
+              key="result"
+              className="result"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+            >
+              {result.split('\n\n').map((section, index) => {
+                const lines = section.trim().split('\n');
+                if (!lines[0]) return null;
+                
+                return (
+                  <div key={index} className="recipe-section">
+                    <h3>{lines[0]}</h3>
+                    <div className="section-content">
+                      {lines.slice(1).map((line, i) => (
+                        <div key={i}>{line}</div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-      <footer>
-        <div className="creators">
+        <footer>
           <p className="credits">Created by Zain Khatri</p>
-        </div>
-      </footer>
+        </footer>
+      </div>
     </div>
   );
 };

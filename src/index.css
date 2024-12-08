@@ -1,13 +1,376 @@
-body {
+/* Base Imports and Variables */
+@import url('https://fonts.googleapis.com/css2?family=Fahkwang:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --background-dark: #0f172a;
+  --card-dark: #1e293b;
+  --text-blue: #60a5fa;
+  --text-gray: #94a3b8;
+  --border-color: #2d3748;
+  --input-bg: #1e293b;
+  --primary-font: 'Fahkwang', sans-serif;
+  --hover-blue: #3b82f6;
+  --error-red: #ef4444;
+  --success-green: #10b981;
+}
+
+/* Reset and Base Styles */
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--primary-font);
+  background-color: var(--background-dark);
+  color: var(--text-gray);
+  line-height: 1.6;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* Layout Containers */
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  width: 90%;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+}
+
+/* Header Styles */
+header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+}
+
+h1 {
+  font-family: var(--primary-font);
+  font-size: 3.5rem;
+  color: var(--text-blue);
+  font-weight: 600;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.tagline {
+  color: var(--text-gray);
+  font-size: 1.1rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  opacity: 0.9;
+}
+
+/* Form Styles */
+.input-section {
+  margin-bottom: 2rem;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  color: var(--text-gray);
+  margin-bottom: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+}
+
+.input-wrapper {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  font-family: var(--primary-font);
+  font-size: 1rem;
+  color: var(--text-gray);
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: var(--text-blue);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+}
+
+input[type="text"]::placeholder {
+  color: var(--text-gray);
+  opacity: 0.5;
+}
+
+/* Fitness Goals Section */
+.fitness-goals {
+  margin: 1.5rem 0;
+}
+
+.goal-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.goal-option {
+  background-color: var(--card-dark);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: border-color 0.2s ease;
+}
+
+.goal-option:hover {
+  border-color: var(--text-blue);
+}
+
+/* Custom Checkbox Styles */
+input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"]:checked {
+  background-color: var(--text-blue);
+  border-color: var(--text-blue);
+}
+
+input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Button Styles */
+button {
+  width: 100%;
+  padding: 1rem;
+  font-family: var(--primary-font);
+  font-size: 1.1rem;
+  color: white;
+  background: var(--text-blue);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+button:hover {
+  background-color: var(--hover-blue);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Loading State */
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-gray);
+}
+
+.loading-spinner {
+  border: 3px solid var(--border-color);
+  border-top: 3px solid var(--text-blue);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Result Section */
+.result {
+  margin-top: 2rem;
+  background-color: var(--card-dark);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.recipe-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.recipe-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.recipe-section h3 {
+  color: var(--text-blue);
+  font-size: 1.3rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.section-content {
+  color: var(--text-gray);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.section-content ul,
+.section-content ol {
+  list-style-position: outside;
+  margin-left: 1.2rem;
+}
+
+.section-content li {
+  margin-bottom: 0.8rem;
+  padding-left: 0.5rem;
+}
+
+.section-content li:last-child {
+  margin-bottom: 0;
+}
+
+/* Footer */
+footer {
+  margin-top: 3rem;
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.credits {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+/* Error States */
+.error {
+  color: var(--error-red);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Success States */
+.success {
+  color: var(--success-green);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .goal-options {
+    grid-template-columns: 1fr;
+  }
+
+  .recipe-section {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  .container {
+    padding: 1rem;
+  }
+
+  .input-wrapper input[type="text"] {
+    font-size: 0.9rem;
+  }
+
+  .section-content {
+    font-size: 0.9rem;
+  }
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 1cm;
+  }
+
+  .input-section,
+  button,
+  .loading {
+    display: none;
+  }
+
+  .result {
+    border: none;
+    padding: 0;
+  }
+
+  .recipe-section h3 {
+    color: black;
+  }
+}
+
+/* Utility Classes */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
 }
