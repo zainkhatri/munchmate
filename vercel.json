@@ -1,35 +1,7 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "app.js",
-        "use": "@vercel/node"
-      },
-      {
-        "src": "package.json",
-        "use": "@vercel/static-build",
-        "config": { 
-          "distDir": "build",
-          "buildCommand": "npm run build"
-        }
-      }
-    ],
-    "routes": [
-      {
-        "src": "/get-meal",
-        "dest": "app.js"
-      },
-      {
-        "src": "^/static/(.*)",
-        "dest": "/static/$1"
-      },
-      {
-        "src": "^/[^.]+$",
-        "dest": "index.html"
-      },
-      {
-        "src": "/(.*)",
-        "dest": "/$1"
-      }
-    ]
-  }
+  "version": 2,
+  "rewrites": [{ 
+    "source": "/api/get-meal",
+    "destination": "/api/get-meal.js"
+  }]
+}

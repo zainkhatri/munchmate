@@ -26,7 +26,7 @@ const App = () => {
       .map(([goal]) => goal);
 
     try {
-      const response = await fetch('/get-meal', {
+      const response = await fetch('/api/get-meal', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,13 +37,25 @@ const App = () => {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to generate recipe');
+      }
+
       const data = await response.json();
       setResult(data.mealSuggestion);
     } catch (error) {
       console.error('Error:', error);
+      setResult('Failed to generate recipe. Please try again.');
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoalClick = (key) => {
+    setFitnessGoals(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
   return (
@@ -92,7 +104,8 @@ const App = () => {
                 }).map(([key, label]) => (
                   <motion.div
                     key={key}
-                    className="goal-option"
+                    className={`goal-option ${fitnessGoals[key] ? 'selected' : ''}`}
+                    onClick={() => handleGoalClick(key)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -100,12 +113,10 @@ const App = () => {
                       type="checkbox"
                       id={key}
                       checked={fitnessGoals[key]}
-                      onChange={(e) => setFitnessGoals(prev => ({
-                        ...prev,
-                        [key]: e.target.checked
-                      }))}
+                      onChange={() => {}} // Empty onChange to avoid React warning
+                      onClick={(e) => e.stopPropagation()} // Prevent double-triggering
                     />
-                    <label htmlFor={key}>{label}</label>
+                    <label htmlFor={key} onClick={(e) => e.preventDefault()}>{label}</label>
                   </motion.div>
                 ))}
               </div>
@@ -122,6 +133,7 @@ const App = () => {
           </form>
         </motion.section>
 
+        {/* Rest of the component remains the same */}
         <AnimatePresence mode="wait">
           {loading && (
             <motion.div

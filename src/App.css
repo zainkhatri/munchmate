@@ -248,6 +248,39 @@ input[type="checkbox"]:checked::after {
   transform: translate(-50%, -50%);
 }
 
+.goal-option {
+    background-color: var(--card-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .goal-option:hover {
+    border-color: var(--text-blue);
+  }
+  
+  .goal-option.selected {
+    background-color: rgba(96, 165, 250, 0.1);
+    border-color: var(--text-blue);
+  }
+  
+  .goal-option label {
+    cursor: pointer;
+    margin-bottom: 0;
+    flex: 1;
+  }
+  
+  /* Prevent text selection when clicking */
+  .goal-option * {
+    user-select: none;
+  }
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .container {

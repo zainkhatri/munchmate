@@ -1,33 +1,44 @@
-const express = require('express');
-const path = require('path');
-require('dotenv').config();
-const { Configuration, OpenAIApi } = require('openai');
-const cors = require('cors');
+import { Configuration, OpenAIApi } from 'openai';
 
-const app = express();
-
-// Enable CORS for development
-app.use(cors());
-
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Configure OpenAI
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
 const openai = new OpenAIApi(configuration);
 
-// API endpoints
-app.post('/get-meal', async (req, res) => {
+export default async function handler(req, res) {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
+    console.log('Environment:', {
+      nodeEnv: process.env.NODE_ENV,
+      hasApiKey: !!process.env.OPENAI_API_KEY
+    });
+
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OpenAI API key is not configured');
+    }
+
     const { ingredients, fitnessGoal } = req.body;
-    
-    console.log('Received request:', { ingredients, fitnessGoal });
 
     if (!ingredients || !Array.isArray(ingredients) || ingredients.length === 0) {
-      return res.status(400).json({ error: 'Please provide valid ingredients.' });
+      return res.status(400).json({ 
+        error: 'Invalid ingredients format',
+        received: ingredients 
+      });
     }
 
     const completion = await openai.createChatCompletion({
@@ -63,43 +74,30 @@ app.post('/get-meal', async (req, res) => {
         },
         {
           role: "user",
-          content: `Create a recipe using these ingredients: ${ingredients.join(', ')}. The user's fitness goal is: ${fitnessGoal.join(', ') || 'general fitness'}`
+          content: `Create a recipe using these ingredients: ${ingredients.join(', ')}. The user's fitness goal is: ${fitnessGoal?.join(', ') || 'general fitness'}`
         }
       ],
       temperature: 0.7,
       max_tokens: 1500,
     });
 
-    const recipeText = completion.data.choices[0]?.message?.content?.trim();
-
-    if (!recipeText) {
-      throw new Error('No recipe generated');
-    }
-
-    return res.json({
+    console.log('OpenAI request successful');
+    
+    res.status(200).json({
       status: 'success',
-      mealSuggestion: recipeText
+      mealSuggestion: completion.data.choices[0].message.content
     });
 
   } catch (error) {
-    console.error('Server error:', error);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
+    
     res.status(500).json({
       error: 'Failed to generate recipe',
       details: error.message
     });
   }
-});
-
-// Serve static files from the React build directory in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'build')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-  });
 }
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
