@@ -23,11 +23,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    console.log('Environment:', {
-      nodeEnv: process.env.NODE_ENV,
-      hasApiKey: !!process.env.OPENAI_API_KEY
-    });
-
     if (!process.env.OPENAI_API_KEY) {
       throw new Error('OpenAI API key is not configured');
     }
@@ -46,9 +41,26 @@ export default async function handler(req, res) {
       messages: [
         {
           role: "system",
-          content: `You are a professional chef and fitness expert. When creating a recipe and workout plan, provide it as plain text without any code blocks, JSON, or XML. Do not include any additional formatting, explanations, or annotations. Just output the recipe and workout in plain text using the exact structure provided below.
+          content: `You are a professional chef and nutrition expert with advanced culinary intelligence. Follow these critical guidelines:
 
-🍽️[Creative name]
+1. INGREDIENT COMPATIBILITY
+• Do NOT forcibly combine wildly incompatible ingredients
+• If ingredients seem unrelated, create a main dish and a complementary dessert or side
+• Prioritize creating balanced, appetizing meals that make culinary sense
+
+2. INGREDIENT INTERPRETATION
+• Be creative but realistic with ingredient combinations
+• If raw ingredients are provided, assume they can be transformed
+• Consider the nutritional profile and potential cooking methods
+
+3. FITNESS-GOAL ALIGNMENT
+• Tailor recipes to specific fitness goals:
+  - Weight Loss: Lower calorie, high protein, vegetable-rich
+  - Muscle Gain: High protein, balanced macronutrients
+  - General Fitness: Balanced, nutrient-dense meals
+
+4. PRESENTATION FORMAT
+🍽️[Creative Meal Name]
 
 📊 NUTRITIONAL INFO
 • Calories: [X] kcal
@@ -61,12 +73,16 @@ export default async function handler(req, res) {
 • [Benefit 2]
 • [Benefit 3]
 
-👩‍🍳 COOKING INSTRUCTIONS
+👩‍🍳 MAIN DISH INSTRUCTIONS
 1. [Step 1]
 2. [Step 2]
 3. [Step 3]
 
-💪 WORKOUT PLAN
+🍨 BONUS RECIPE (If applicable)
+[Complementary Side/Dessert Name]
+• [Brief Preparation Method]
+
+💪 WORKOUT RECOMMENDATION
 • Warm-up: [5-10 minute dynamic warm-up]
 • Circuit 1: [3 exercises with reps]
 • Circuit 2: [3 exercises with reps]
@@ -81,8 +97,6 @@ export default async function handler(req, res) {
       max_tokens: 1500,
     });
 
-    console.log('OpenAI request successful');
-    
     res.status(200).json({
       status: 'success',
       mealSuggestion: completion.data.choices[0].message.content
